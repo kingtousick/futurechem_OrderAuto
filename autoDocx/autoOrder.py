@@ -9,7 +9,7 @@ from copy import deepcopy
 class PurchaseRequestApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Purchase Request App")
+        self.root.title("구매요구서 자동화")
 
         self.tab_control = ttk.Notebook(root)
 
@@ -206,7 +206,7 @@ class PurchaseRequestApp:
             timestamp = now.strftime("%Y%m%d_%H%M%S") 
             new_file_path = f"구매요구서_{timestamp}.docx"
             document.save(new_file_path)
-            print(f"Word document modified and saved as: {new_file_path}")
+            print(f"파일이 저장되었습니다 : {new_file_path}")
 
     def replace_text_in_cell(self, cell, key, value):
       # 셀 내용을 치환
