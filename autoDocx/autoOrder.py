@@ -5,6 +5,14 @@ import sqlite3
 from docx import Document
 from datetime import datetime
 from copy import deepcopy
+import os
+import sys 
+
+
+def resource_path(relative_path):
+    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base_path, relative_path)
+
 
 class PurchaseRequestApp:
     def __init__(self, root):
