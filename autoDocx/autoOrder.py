@@ -16,11 +16,13 @@ def resource_path(relative_path):
 
 class PurchaseRequestApp:
     def __init__(self, root):
+        
         self.root = root
         self.root.title("구매요구서 자동화")
+        self.manpower_entries = [] 
 
         self.tab_control = ttk.Notebook(root)
-
+        
         # Tab 1: Manual Input
         self.tab1 = ttk.Frame(self.tab_control)
         self.tab_control.add(self.tab1, text="수동입력")
@@ -37,8 +39,9 @@ class PurchaseRequestApp:
         self.setup_tab3()
 
         self.tab_control.pack(expand=1, fill='both')
-
+      
     def setup_tab1(self):
+    
        label = ttk.Label(self.tab1, text="구매요구서 양식:")
        label.grid(column=0, row=0)
 
@@ -51,110 +54,123 @@ class PurchaseRequestApp:
        button.grid(column=2, row=0)
 
         # 사용자 입력 부분 
-       ttk.Label(self.tab1, text="기관명:").grid(column=0, row=1)
+       
+       ttk.Label(self.tab1, text="기관명:").grid(column=0, row=1, sticky=tk.E)
        self.institution_entry = ttk.Entry(self.tab1)
        self.institution_entry.grid(column=1, row=1)
-
-       ttk.Label(self.tab1, text="기관코드:").grid(column=0, row=2)
+       
+       ttk.Label(self.tab1, text="기관코드:").grid(column=0, row=2, sticky=tk.E)
        self.institution_code_entry = ttk.Entry(self.tab1)
        self.institution_code_entry.grid(column=1, row=2)
 
-       ttk.Label(self.tab1, text="핵종명[앞]:").grid(column=0, row=3)
+       ttk.Label(self.tab1, text="핵종명[앞]:").grid(column=0, row=3, sticky=tk.E)
        self.isotope_fname_entry = ttk.Entry(self.tab1)
        self.isotope_fname_entry.grid(column=1, row=3)
 
-       ttk.Label(self.tab1, text="핵종수량:").grid(column=0, row=4)
+       ttk.Label(self.tab1, text="핵종수량:").grid(column=0, row=4, sticky=tk.E)
        self.quantity_entry = ttk.Entry(self.tab1)
        self.quantity_entry.grid(column=1, row=4)
 
        
-       ttk.Label(self.tab1, text="핵종명[뒤]:").grid(column=0, row=5)
+       ttk.Label(self.tab1, text="핵종명[뒤]:").grid(column=0, row=5, sticky=tk.E)
        self.isotope_ename_entry = ttk.Entry(self.tab1)
        self.isotope_ename_entry.grid(column=1, row=5)
 
-       ttk.Label(self.tab1, text="모델명:").grid(column=0, row=6)
+       ttk.Label(self.tab1, text="모델명:").grid(column=0, row=6, sticky=tk.E)
        self.model_name_entry = ttk.Entry(self.tab1)
        self.model_name_entry.grid(column=1, row=6)
-
-       ttk.Label(self.tab1, text="투입인력 08:30 :").grid(column=0, row=7)
-       self.manpower_entry1 = ttk.Entry(self.tab1)
-       self.manpower_entry1.grid(column=1, row=7)
-
-       ttk.Label(self.tab1, text="투입인력 09:00 :").grid(column=0, row=8)
-       self.manpower_entry2 = ttk.Entry(self.tab1)
-       self.manpower_entry2.grid(column=1, row=8)
-
-       ttk.Label(self.tab1, text="투입인력 09:30 :").grid(column=0, row=9)
-       self.manpower_entry3 = ttk.Entry(self.tab1)
-       self.manpower_entry3.grid(column=1, row=9)
        
-       ttk.Label(self.tab1, text="투입인력 10:00 :").grid(column=0, row=10)
-       self.manpower_entry4 = ttk.Entry(self.tab1)
-       self.manpower_entry4.grid(column=1, row=10)
+     
+       manpower_labels = [f"투입인력 : {i:02d}:{j:02d}" for i in range(8, 18) for j in range(0, 60, 30) if not ((i == 8 and j == 0) or (i == 17 and j == 30))]
+       for i in range(len(manpower_labels)):
+            ttk.Label(self.tab1, text=manpower_labels[i]).grid(column=0, row=6+i)
+            # self.manpower_entry = ttk.Entry(self.tab1)
+            # self.manpower_entry.grid(column=1, row=6+i) 
+            entry = ttk.Entry(self.tab1)
+            entry.grid(column=1, row=6+i)
+            self.manpower_entries.append(entry)
+                   
+            
 
-       ttk.Label(self.tab1, text="투입인력 10:30 :").grid(column=0, row=11)
-       self.manpower_entry5 = ttk.Entry(self.tab1)
-       self.manpower_entry5.grid(column=1, row=11)
+    #    ttk.Label(self.tab1, text="투입인력 08:30 :").grid(column=0, row=7)
+    #    self.manpower_entry1 = ttk.Entry(self.tab1)
+    #    self.manpower_entry1.grid(column=1, row=7)
 
-       ttk.Label(self.tab1, text="투입인력 11:00 :").grid(column=0, row=12)
-       self.manpower_entry6 = ttk.Entry(self.tab1)
-       self.manpower_entry6.grid(column=1, row=12)
+    #    ttk.Label(self.tab1, text="투입인력 09:00 :").grid(column=0, row=8)
+    #    self.manpower_entry2 = ttk.Entry(self.tab1)
+    #    self.manpower_entry2.grid(column=1, row=8)
 
-       ttk.Label(self.tab1, text="투입인력 11:30 :").grid(column=0, row=13)
-       self.manpower_entry7 = ttk.Entry(self.tab1)
-       self.manpower_entry7.grid(column=1, row=13)
-
-       ttk.Label(self.tab1, text="투입인력 12:00 :").grid(column=0, row=14)
-       self.manpower_entry8 = ttk.Entry(self.tab1)
-       self.manpower_entry8.grid(column=1, row=14)
-
-       ttk.Label(self.tab1, text="투입인력 12:30 :").grid(column=0, row=15)
-       self.manpower_entry9 = ttk.Entry(self.tab1)
-       self.manpower_entry9.grid(column=1, row=15)
-
-       ttk.Label(self.tab1, text="투입인력 13:00 :").grid(column=0, row=16)
-       self.manpower_entry10 = ttk.Entry(self.tab1)
-       self.manpower_entry10.grid(column=1, row=16)
-
-       ttk.Label(self.tab1, text="투입인력 13:30 :").grid(column=0, row=17)
-       self.manpower_entry11 = ttk.Entry(self.tab1)
-       self.manpower_entry11.grid(column=1, row=17)
-
-       ttk.Label(self.tab1, text="투입인력 14:00 :").grid(column=0, row=18)
-       self.manpower_entry12 = ttk.Entry(self.tab1)
-       self.manpower_entry12.grid(column=1, row=18)
-
-       ttk.Label(self.tab1, text="투입인력 14:30 :").grid(column=0, row=19)
-       self.manpower_entry13 = ttk.Entry(self.tab1)
-       self.manpower_entry13.grid(column=1, row=19)
-
-       ttk.Label(self.tab1, text="투입인력 15:00 :").grid(column=0, row=20)
-       self.manpower_entry14 = ttk.Entry(self.tab1)
-       self.manpower_entry14.grid(column=1, row=20)
-
-       ttk.Label(self.tab1, text="투입인력 15:30 :").grid(column=0, row=21)
-       self.manpower_entry15 = ttk.Entry(self.tab1)
-       self.manpower_entry15.grid(column=1, row=21)
-
-       ttk.Label(self.tab1, text="투입인력 16:00 :").grid(column=0, row=22)
-       self.manpower_entry16 = ttk.Entry(self.tab1)
-       self.manpower_entry16.grid(column=1, row=22)
-
-       ttk.Label(self.tab1, text="투입인력 16:30 :").grid(column=0, row=23)
-       self.manpower_entry17 = ttk.Entry(self.tab1)
-       self.manpower_entry17.grid(column=1, row=23) 
+    #    ttk.Label(self.tab1, text="투입인력 09:30 :").grid(column=0, row=9)
+    #    self.manpower_entry3 = ttk.Entry(self.tab1)
+    #    self.manpower_entry3.grid(column=1, row=9)
        
-       ttk.Label(self.tab1, text="투입인력 17:00 :").grid(column=0, row=24)
-       self.manpower_entry18 = ttk.Entry(self.tab1)
-       self.manpower_entry18.grid(column=1, row=24) 
+    #    ttk.Label(self.tab1, text="투입인력 10:00 :").grid(column=0, row=10)
+    #    self.manpower_entry4 = ttk.Entry(self.tab1)
+    #    self.manpower_entry4.grid(column=1, row=10)
+
+    #    ttk.Label(self.tab1, text="투입인력 10:30 :").grid(column=0, row=11)
+    #    self.manpower_entry5 = ttk.Entry(self.tab1)
+    #    self.manpower_entry5.grid(column=1, row=11)
+
+    #    ttk.Label(self.tab1, text="투입인력 11:00 :").grid(column=0, row=12)
+    #    self.manpower_entry6 = ttk.Entry(self.tab1)
+    #    self.manpower_entry6.grid(column=1, row=12)
+
+    #    ttk.Label(self.tab1, text="투입인력 11:30 :").grid(column=0, row=13)
+    #    self.manpower_entry7 = ttk.Entry(self.tab1)
+    #    self.manpower_entry7.grid(column=1, row=13)
+
+    #    ttk.Label(self.tab1, text="투입인력 12:00 :").grid(column=0, row=14)
+    #    self.manpower_entry8 = ttk.Entry(self.tab1)
+    #    self.manpower_entry8.grid(column=1, row=14)
+
+    #    ttk.Label(self.tab1, text="투입인력 12:30 :").grid(column=0, row=15)
+    #    self.manpower_entry9 = ttk.Entry(self.tab1)
+    #    self.manpower_entry9.grid(column=1, row=15)
+
+    #    ttk.Label(self.tab1, text="투입인력 13:00 :").grid(column=0, row=16)
+    #    self.manpower_entry10 = ttk.Entry(self.tab1)
+    #    self.manpower_entry10.grid(column=1, row=16)
+
+    #    ttk.Label(self.tab1, text="투입인력 13:30 :").grid(column=0, row=17)
+    #    self.manpower_entry11 = ttk.Entry(self.tab1)
+    #    self.manpower_entry11.grid(column=1, row=17)
+
+    #    ttk.Label(self.tab1, text="투입인력 14:00 :").grid(column=0, row=18)
+    #    self.manpower_entry12 = ttk.Entry(self.tab1)
+    #    self.manpower_entry12.grid(column=1, row=18)
+
+    #    ttk.Label(self.tab1, text="투입인력 14:30 :").grid(column=0, row=19)
+    #    self.manpower_entry13 = ttk.Entry(self.tab1)
+    #    self.manpower_entry13.grid(column=1, row=19)
+
+    #    ttk.Label(self.tab1, text="투입인력 15:00 :").grid(column=0, row=20)
+    #    self.manpower_entry14 = ttk.Entry(self.tab1)
+    #    self.manpower_entry14.grid(column=1, row=20)
+
+    #    ttk.Label(self.tab1, text="투입인력 15:30 :").grid(column=0, row=21)
+    #    self.manpower_entry15 = ttk.Entry(self.tab1)
+    #    self.manpower_entry15.grid(column=1, row=21)
+
+    #    ttk.Label(self.tab1, text="투입인력 16:00 :").grid(column=0, row=22)
+    #    self.manpower_entry16 = ttk.Entry(self.tab1)
+    #    self.manpower_entry16.grid(column=1, row=22)
+
+    #    ttk.Label(self.tab1, text="투입인력 16:30 :").grid(column=0, row=23)
+    #    self.manpower_entry17 = ttk.Entry(self.tab1)
+    #    self.manpower_entry17.grid(column=1, row=23) 
        
-       ttk.Label(self.tab1, text="구입 예정일:").grid(column=0, row=25)
+    #    ttk.Label(self.tab1, text="투입인력 17:00 :").grid(column=0, row=24)
+    #    self.manpower_entry18 = ttk.Entry(self.tab1)
+    #    self.manpower_entry18.grid(column=1, row=24) 
+       
+       ttk.Label(self.tab1, text="구입 예정일:").grid(column=0, row=25, sticky=tk.E)
        self.purchase_date_entry = ttk.Entry(self.tab1)
        self.purchase_date_entry.grid(column=1, row=25)
 
        # 워드파일 생성
        generate_button = ttk.Button(self.tab1, text="파일생성하기", command=self.generate_word_file)
-       generate_button.grid(column=1, row=26)
+       generate_button.grid(column=1, row=27)
 
     def upload_form(self):
         file_path = filedialog.askopenfilename(filetypes=[("Word files", "*.docx")])
@@ -174,27 +190,31 @@ class PurchaseRequestApp:
                 "isotopeFront": self.isotope_fname_entry.get(),
                 "Quantity": self.quantity_entry.get (),
                 "isotopeEnd": self.isotope_ename_entry.get(),
-                "model": self.model_name_entry.get(),
-                "manPw1": self.manpower_entry1.get(),
-                "manPw2": self.manpower_entry2.get(),
-                "manPw3": self.manpower_entry3.get(),
-                "manPw4": self.manpower_entry4.get(),
-                "manPw5": self.manpower_entry5.get(),
-                "manPw6": self.manpower_entry6.get(),
-                "manPw7": self.manpower_entry7.get(),
-                "manPw8": self.manpower_entry8.get(),
-                "manPw9": self.manpower_entry9.get(),
-                "manPw10": self.manpower_entry10.get(),
-                "manPw11": self.manpower_entry11.get(),
-                "manPw12": self.manpower_entry12.get(),
-                "manPw13": self.manpower_entry13.get(),
-                "manPw14": self.manpower_entry14.get(),
-                "manPw15": self.manpower_entry15.get(),
-                "manPw16": self.manpower_entry16.get(),
-                "manPw17": self.manpower_entry17.get(),
-                "manPw18": self.manpower_entry18.get(),
+                "model": self.model_name_entry.get(),                    
+                # "manPw1": self.manpower_entry1.get(),
+                # "manPw2": self.manpower_entry2.get(),
+                # "manPw3": self.manpower_entry3.get(),
+                # "manPw4": self.manpower_entry4.get(),
+                # "manPw5": self.manpower_entry5.get(),
+                # "manPw6": self.manpower_entry6.get(),
+                # "manPw7": self.manpower_entry7.get(),
+                # "manPw8": self.manpower_entry8.get(),
+                # "manPw9": self.manpower_entry9.get(),
+                # "manPw10": self.manpower_entry10.get(),
+                # "manPw11": self.manpower_entry11.get(),
+                # "manPw12": self.manpower_entry12.get(),
+                # "manPw13": self.manpower_entry13.get(),
+                # "manPw14": self.manpower_entry14.get(),
+                # "manPw15": self.manpower_entry15.get(),
+                # "manPw16": self.manpower_entry16.get(),
+                # "manPw17": self.manpower_entry17.get(),
+                # "manPw18": self.manpower_entry18.get(),
                 "purchDt": self.purchase_date_entry.get()
             }
+              # manPw 엔트리들을 동적으로 추가
+            for i in range(1, 19):
+                placeholders[f"manPw{i}"] = getattr(self, f"manpower_entry{i}").get()
+
             # 각 표에서 검색 단어를 치환합니다.
             for table in document.tables:
                 for row in table.rows:
@@ -264,3 +284,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
