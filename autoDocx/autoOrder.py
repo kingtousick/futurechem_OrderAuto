@@ -53,8 +53,7 @@ class PurchaseRequestApp:
        button = ttk.Button(self.tab1, text="Browse", command=self.upload_form)
        button.grid(column=2, row=0)
 
-        # 사용자 입력 부분 
-       
+       # 사용자 입력 부분 
        ttk.Label(self.tab1, text="기관명:").grid(column=0, row=1, sticky=tk.E)
        self.institution_entry = ttk.Entry(self.tab1)
        self.institution_entry.grid(column=1, row=1)
@@ -100,7 +99,7 @@ class PurchaseRequestApp:
         file_path = filedialog.askopenfilename(filetypes=[("Word files", "*.docx")])
         if file_path:
             self.file_path.set(file_path)
-
+                                              
     def generate_word_file(self):
         template_path = self.file_path.get()
         if template_path:
@@ -124,21 +123,16 @@ class PurchaseRequestApp:
             for i in range(1, 19):
                 placeholders[f"manPw{i}"] = self.manpower_entries[i-1].get()
                 print(f"manPw{i}={self.manpower_entries[i-1].get()}")
-                                            
 
             # 각 표에서 검색 단어를 치환합니다.
             for table in document.tables:
                 for row in table.rows:
                     for cell in row.cells:
                         for key, value in placeholders.items():
-                            cell.text = cell.text.replace(f"{key}", value)
-                            print(f"After replace - {key}={value}, cell.text={cell.text}")
+                            if key == cell.text:
+                                cell.text = cell.text.replace(f"{key}", value)
+                                print(f"After replace - {key}={value}, cell.text={cell.text}")            
             
-            
-            # for paragraph in document.paragraphs:
-            #     for key, value in placeholders.items():
-            #         print(f"입력값 ={key}  변환값 = {value}")
-            #         paragraph.text = paragraph.text.replace(f"{key}", value)
 
             # 변경된 파일 저장 
             now = datetime.now()
@@ -146,33 +140,7 @@ class PurchaseRequestApp:
             new_file_path = f"구매요구서_{timestamp}.docx"
             document.save(new_file_path)
             print(f"파일이 저장되었습니다 : {new_file_path}")
-
-      
-        # # 문단을 복제하여 스타일과 형식을 그대로 유지
-        # new_cell = deepcopy(cell)
         
-        # # 기존 문단 비우기
-        # for paragraph in cell.paragraphs:
-        #     for run in paragraph.runs:
-        #         run.clear()
-                
-        # # 새로운 내용으로 채우기
-        # new_cell.text = new_cell.text.replace(f"{key}", value)
-
-        #  # 부모인 행에 대해 새로운 셀을 추가
-        # row = cell._element.getparent()
-        # if row is not None:
-        #     row.append(new_cell._element)
-        # else:
-        #     # 부모 행이 없는 경우, 로그 등을 통해 디버깅 정보를 확인할 수 있습니다.
-        #     print("Warning: Parent row not found.")
-
-        # # 기존 셀 제거
-        # if cell._element.getparent() is not None:
-        #     cell._element.getparent().remove(cell._element)
-        # else:
-        #     # 부모 셀이 없는 경우, 로그 등을 통해 디버깅 정보를 확인할 수 있습니다.
-        #     print("Warning: Parent cell not found.")
         pass
 
     def setup_tab2(self):
