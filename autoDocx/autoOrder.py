@@ -3,10 +3,27 @@ from tkinter import filedialog
 from tkinter import ttk
 import sqlite3
 from docx import Document
+from docx.shared import Pt, Inches
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT
 from datetime import datetime
 from copy import deepcopy
 import os
+import ctypes
 import sys 
+from tkinter import messagebox
+# pyinstaller -w -F --icon=C:/Users/wjdck/OneDrive/문서/futurechem_OrderAuto/futurechem_OrderAuto/autoDocx/icon/futureMain2.ico  C:/Users/wjdck/OneDrive/문서/futurechem_OrderAuto/futurechem_OrderAuto/autoDocx/autoOrder.py
+
+import ctypes
+
+# 변경할 아이콘 파일 경로
+icon_path = 'C:/Users/wjdck/OneDrive/문서/futurechem_OrderAuto/futurechem_OrderAuto/autoDocx/icon/futureMain2.ico'
+
+# 아이콘 적용
+ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(icon_path)
+
+# 창 제목 표시줄 아이콘 변경
+ctypes.windll.user32.SendMessageW(ctypes.windll.kernel32.GetConsoleWindow(), 0x80, 0, icon_path)
 
 
 def resource_path(relative_path):
@@ -16,7 +33,10 @@ def resource_path(relative_path):
 
 class PurchaseRequestApp:
     def __init__(self, root):
-        
+
+        # 추가 코드: 창 아이콘 변경
+        root.iconbitmap(default=icon_path)
+
         self.root = root
         self.root.title("구매요구서 자동화")
         self.manpower_entries = [] 
@@ -104,10 +124,11 @@ class PurchaseRequestApp:
         template_path = self.file_path.get()
         if template_path:
             # 양식 파일 
-            original_document = Document(template_path)
+            # original_document = Document(template_path)
+            document = Document(template_path)
         
             # 문서를 복사하여 기존 양식 유지
-            document = deepcopy(original_document)
+            # document = deepcopy(original_document)
 
             # 파일내용 변환 
             placeholders = {
@@ -121,34 +142,75 @@ class PurchaseRequestApp:
             }
             # manPw 엔트리들을 동적으로 추가
             for i in range(1, 19):
+              manPw_value = self.manpower_entries[i-1].get()
+              if not manPw_value:  # 공백인 경우
+               placeholders[f"manPw{i}"] = self.manpower_entries[i-1].insert(0, " ")  # 스페이스바 추가
+              else: 
                 placeholders[f"manPw{i}"] = self.manpower_entries[i-1].get()
                 print(f"manPw{i}={self.manpower_entries[i-1].get()}")
-
+            
             # 각 표에서 검색 단어를 치환합니다.
             for table in document.tables:
                 for row in table.rows:
                     for cell in row.cells:
+                        print(f"CELL={cell.text}")
                         for key, value in placeholders.items():
-                            if key == cell.text:
-                                cell.text = cell.text.replace(f"{key}", value)
+                            if key in cell.text:
+                                import re
+                                cell.text = re.sub(rf"\b{re.escape(key)}\b", value, cell.text)                       
                                 print(f"After replace - {key}={value}, cell.text={cell.text}")            
-            
+                           
+                            # # 텍스트 정렬을 가운데 정렬로 변경 
+                                for paragraph in cell.paragraphs:
+                                    paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+                                #  텍스트 정렬을 가운데 정렬로 변경
+                                # for paragraph in cell.paragraphs:
+                                #     for run in paragraph.runs:
+                                #         run.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 
-            # 변경된 파일 저장 
+                                # 병합된 셀의 경우 수직 정렬도 설정
+                                if cell._element.xpath(".//w:vMerge") and cell._element.xpath(".//w:vMerge")[0].values()[0] == "restart":
+                                    cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
+                                
+                                    
+
+                                # 높이 설정 (예시에서는 줄 수에 따라 조절)
+                                # lines = len(value.split('\n'))
+                                # cell.paragraphs[0].runs[0].font.size = Pt(12)  # 원하는 폰트 크기로 설정
+                                # cell.height = Inches(lines * 0.3)  # 적절한 상수를 곱하여 높이 설정    
+     
+
+            # 변경된 파일 저장
             now = datetime.now()
-            timestamp = now.strftime("%Y%m%d_%H%M%S") 
-            new_file_path = f"구매요구서_{timestamp}.docx"
-            document.save(new_file_path)
-            print(f"파일이 저장되었습니다 : {new_file_path}")
+            timestamp = now.strftime("%Y%m%d_%H%M%S")
+            default_file_name = f"구매요구서_{timestamp}.docx"
+
+            # 사용자에게 저장할 파일의 경로 선택 받기
+            file_path = filedialog.asksaveasfilename(
+                defaultextension=".docx",
+                filetypes=[("Word files", "*.docx")],
+                initialfile=default_file_name
+            )
+
+            if file_path:
+                document.save(file_path)
+                print(f"파일이 저장되었습니다: {file_path}")
+
+            # "완료 되었습니다" 얼럿창 띄우기
+            messagebox.showinfo("완료", "파일 생성이 완료되었습니다!")
         
         pass
 
     def setup_tab2(self):
-        # Implement Tab 2 UI and functionality here
+        # Implement Tab 2 UI and functionality here       
+        label = ttk.Label(self.tab2, text="■■■■■■■■■■■기능 미정■■■■■■■■■■■")
+        label.grid(column=0, row=0)
         pass
 
     def setup_tab3(self):
         # Implement Tab 3 UI and functionality here
+        label = ttk.Label(self.tab3, text="■■■■■■■■■■■기능 미정■■■■■■■■■■■")
+        label.grid(column=0, row=0)
         pass
 
 def main():
@@ -158,4 +220,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
